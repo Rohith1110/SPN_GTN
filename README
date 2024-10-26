@@ -1,0 +1,37 @@
+# Install Miniconda on your machine with .pkg file
+
+# Clone the transformer repository
+
+git clone https://github.com/graphdeeplearning/graphtransformer.git
+
+# Copy the environment file to the graphtransformer folder
+
+cp environment_cpu_py38.yml graphtransformer/
+
+# Go to the graphtransformer folder
+
+cd graphtransformer
+
+# Install python environment
+
+conda env create -f environment_cpu_py38.yml
+
+# Activate environment
+
+conda activate graph_transformer
+
+# At the root of the project
+
+cd data/
+
+# Download ZINC molecules dataset
+
+bash script_download_molecules.sh
+
+# At the root of the project
+
+cd ..
+
+# Run the main file (at the root of the project) for testing the model
+
+python main_molecules_graph_regression.py --config 'configs/molecules_GraphTransformer_LapPE_ZINC_500k_sparse_graph_BN.json' # for CPU
