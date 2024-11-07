@@ -35,3 +35,13 @@ cd ..
 # Run the main file (at the root of the project) for testing the model
 
 python main_molecules_graph_regression.py --config 'configs/molecules_GraphTransformer_LapPE_ZINC_500k_sparse_graph_BN.json' # for CPU
+
+
+
+SPN on collab:
+!pip install torch==2.0.1+cu118 torchvision==0.15.2+cu118 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu118
+
+!pip install torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-2.0.1+cu118.html
+!pip install torch-geometric
+
+!python solve_proxy.py --dataset ppi-10-0 --solve-proxy-epochs 500 GCN
