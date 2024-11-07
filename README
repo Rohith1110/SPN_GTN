@@ -1,22 +1,15 @@
-Edge Label Significance: In SPN, edge labels are created by combining the labels of connected nodes (yu * dataset.num_classes + yv). This is based on the assumption that:
-
-Each edge's label uniquely represents the relationship between its connected nodes
-Similar node relationships should have similar edge labels
-These consistent edge labels help the model learn patterns in graph structure
-
-What This Does:
-
-For the same node relationship (e.g., type-1 node to type-2 node):
-
-Original paper: Always gets the same edge label
-Our modification: 80% chance of getting a random label
+###Limitation 1:
+In our exploration of SPN with alternative datasets, particularly the CS dataset from Coauthor, we encountered several limitations impacting the model’s performance. Firstly, SPN was originally designed and validated on specific graph datasets, and applying it to datasets with different characteristics, such as the CS dataset, resulted in suboptimal outcomes. This issue of data mismatch reveals SPN’s dependency on dataset-specific configurations. Additionally, the CS dataset has a much higher feature dimension compared to SPN’s original datasets; to make it compatible with SPN, we reduced this dimension from 6805 to 16 in the first layer, likely causing significant information loss that weakened the model’s effectiveness.
+Moreover, we observed a misalignment in the edge label space, where the CS dataset’s edge label combinations did not align with the 225 predefined classes in SPN. This mismatch led to an occasional accuracy drop to zero, particularly for datasets with complex connectivity and diverse label structures. Notably, the original SPN paper does not discuss any preprocessing or handling techniques for such dataset mismatches, which limited our ability to effectively adapt the model to new datasets. These limitations highlight the need for adaptable preprocessing strategies and configurable SPN settings to better support diverse graph datasets in real-world applications.
 
 
-Learning Impact:
+###Limitation2
+In this experiment, we modified the SPN exisitng pipeline to work with extremely small graphs, limiting the number of nodes in each graph to a maximum of 5. This involved transforming the dataset by truncating the node features (data.x) and edge indices (data.edge_index) accordingly, effectively reducing the complexity of the input graphs. The objective was to evaluate SPN's ability to adapt and learn meaningful representations from highly simplified graph structures. The pipeline included precomputing edge labels (data.edge_labels) for edge prediction tasks and testing the model’s performance in terms of Node Accuracy (NAcc) and Edge Accuracy (EAcc).
 
-Original: Model can learn "Edge label X always means node type A connects to node type B"
-Modified: Model sees:
+The training results showed that node accuracy started at 0.2 and plateaued at 0.4 early in training, indicating limited learning capacity. However, edge accuracy consistently returned nan throughout training, signaling that the model failed to learn meaningful edge-level relationships. Attempts to fine-tune the edge prediction process, such as adjusting the softmax_temp parameter to various values (100, 10, 2, etc.), did not resolve the issue. Post-processing the predictions and saving the trained model also reflected these limitations, with the final node accuracy capped at 0.4 and edge accuracy remaining nan.
 
-Same relationship → Different labels 80% of the time
-Different relationships → Same labels randomly
-Only 20% correct patterns
+The observed limitations primarily stem from the extreme simplification of the graphs. Small graphs with ≤5 nodes lack the structural diversity and complexity needed for SPN to effectively utilize its architecture, which relies on richer graph structures to extract patterns. The truncation reduced the number of edges, leading to insufficient training signals and potential numerical issues, such as division by zero in loss calculations or invalid softmax outputs. This highlights a fundamental challenge: SPN is not optimized for sparse or minimal graphs, as its design assumes graphs with a richer connectivity to propagate meaningful messages across nodes and edges.
+
+The edge prediction task was particularly affected, likely due to the loss of critical connectivity information in the reduced graphs. The absence of sufficient edges or disconnected components may have caused invalid edge labels or undefined predictions. This was compounded by SPN's reliance on global structural patterns, which small graphs inherently lack. As a result, both training and evaluation metrics showed stagnation and poor generalization.
+
+These results highlight SPN's dependency on graph richness and underscore the challenges of adapting general-purpose graph models to simplified datasets. While SPN struggled with small graphs in this experiment, these findings provide valuable insights into its limitations 
