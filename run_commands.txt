@@ -1,0 +1,46 @@
+python solve_proxy.py --dataset dblp \
+    --solve-proxy-epochs 400 \
+    --solve-proxy-eval-every 50 \
+    --separate-model-after-proxy \
+    --dropout-prob 0.3 \
+    GATv2 \
+    --GNN-hidden-sizes 64 64 \
+    --GATv2-heads 4 4 6
+
+python solve_proxy.py --dataset ppi-10-0 \
+    --solve-proxy-epochs 400 \
+    --solve-proxy-eval-every 50 \
+    --separate-model-after-proxy \
+    --dropout-prob 0.3 \
+    GATv2 \
+    --GNN-hidden-sizes 64 64 \
+    --GATv2-heads 4 4 6
+
+python refine.py --dataset ppi-2-99 \
+    --no-proxy \
+    --refine-epochs 5000 \
+    --load-ckpt "./results/separated_GATv2Conv/model_ppi-10-0_seed1_10-30_20-41-40_proxy.pt" \
+    --no-log-softmax \
+    GATv2 \
+    --GNN-hidden-sizes 64 64 \
+    --GATv2-heads 4 4 6
+
+python refine.py \
+    --dataset ppi-10-120 \
+    --solve-proxy-epochs 1000 \
+    --solve-proxy-eval-every 100 \
+    --refine-epochs 1000 \
+    --refine-eval-every 100 \
+    GATv2 \
+    --GNN-hidden-sizes 256 256 \
+    --GATv2-heads 4 4 6 
+    
+    
+python refine.py \
+    --dataset ppi-10-120 \
+    --no-proxy \
+    --refine-epochs 1000 \
+    --refine-eval-every 100 \
+    --no-log-softmax GATv2 \
+    --GNN-hidden-sizes 256 256 \
+    --GATv2-heads 4 4 6 

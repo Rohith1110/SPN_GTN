@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# Define parameters
+SOLVE_PROXY_EPOCHS=1000
+REFINE_EPOCHS=1000
+MODEL_TYPE="GATv2"
+GNN_HIDDEN_SIZES=(256 256)
+GATV2_HEADS=(4 4 6)
+SEED=1
+
+# Timestamp for unique checkpoint filenames
+TIMESTAMP=$(date +"%m-%d_%H-%M-%S")
+
+
+# Loop through different PPI datasets
+for PPI_SIZE in 1 2
+do
+    # Loop through label IDs from 0 to 120
+    for LABEL_ID in {0..120}
+    do
+        DATASET="ppi-${PPI_SIZE}-${LABEL_ID}"
+        
+        echo "============================================"
+        echo "Starting refinement for PPI-${PPI_SIZE}, Label ID: ${LABEL_ID}"
+        echo "============================================"
+        
+        # --- Run Refine with Proxy ---
+        echo "Running refine.py with proxy"
+        
+        # wait_for_jobs
+        
+        # python refine.py \
+        #     --dataset ${DATASET} \
+        #     --solve-proxy-epochs ${SOLVE_PROXY_EPOCHS} \
+        #     --solve-proxy-eval-every 100 \
+        #     --solve-proxy-node-lr 5e-3 \
+        #     --solve-proxy-edge-lr 1e-3 \
+        #     --refine-epochs ${REFINE_EPOCHS} \
+        #     --refine-eval-every 100 \
+        #     ${MODEL_TYPE} \
+        #     --GNN-hidden-sizes ${GNN_HIDDEN_SIZES[@]} \
+        #     --GATv2-heads ${GATV2_HEADS[@]} 
+
+        python refine.py \
+            --dataset ${DATASET} \
+            --solve-proxy-epochs ${SOLVE_PROXY_EPOCHS} \
+            --solve-proxy-eval-every 100 \
+            --refine-epochs ${REFINE_EPOCHS} \
+            --refine-eval-every 100 \
+            --joint-model \
+            ${MODEL_TYPE} \
+            --GNN-hidden-sizes ${GNN_HIDDEN_SIZES[@]} \
+            --GATv2-heads ${GATV2_HEADS[@]} 
+        
+        # --- Run Refine without Proxy ---
+        echo "Running refine.py without proxy"
+        
+        # wait_for_jobs
+        
+        # python refine.py \
+        #     --dataset ${DATASET} \
+        #     --no-proxy \
+        #     --refine-epochs ${REFINE_EPOCHS} \
+        #     --refine-eval-every 100 \
+        #     --no-log-softmax ${MODEL_TYPE} \
+        #     --GNN-hidden-sizes ${GNN_HIDDEN_SIZES[@]} \
+        #     --GATv2-heads ${GATV2_HEADS[@]} 
+
+        python refine.py \
+            --dataset ${DATASET} \
+            --no-proxy \
+            --refine-epochs ${REFINE_EPOCHS} \
+            --refine-eval-every 100 \
+            --joint-model \
+            --no-log-softmax ${MODEL_TYPE} \
+            --GNN-hidden-sizes ${GNN_HIDDEN_SIZES[@]} \
+            --GATv2-heads ${GATV2_HEADS[@]} 
+        
+        echo "Submitted refinement jobs for PPI-${PPI_SIZE}, Label ID: ${LABEL_ID}"
+    done
+done
+
+echo "All refinement jobs have completed."

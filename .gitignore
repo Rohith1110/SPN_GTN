@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Project specific
+*.pt
+*.pth
+*.7z
+data/
+results/
+logs/
+*.log
+*.csv
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS specific
+.DS_Store
+Thumbs.db
+*.Zone.Identifier
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyTorch
+.DS_Store
+
+# Zone Identifier
+*.Zone.Identifier
