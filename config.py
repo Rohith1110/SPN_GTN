@@ -52,6 +52,28 @@ parser.add_argument('-d', '--dropout-prob', type=float, default=0, help='dropout
 parser.add_argument('--GNN-norm-module', type=str, choices=('none', 'batch', 'layer', 'instance'), default='none', help='Type of normalization module in GNN.')
 parser.add_argument('--ckpt-grad', action='store_true', help='Enables module checkpointing, which costs less memory but more run time.')
 
+# Add a new argument to toggle the Graph Transformer layer
+parser.add_argument('--use_gt_layer', action='store_true',
+                    help='Include the Graph Transformer (GT) layer in the model.')
+
+# Modify existing arguments if necessary to accommodate transformer parameters
+parser.add_argument('--num_transformer_layers', type=int, default=2,
+                    help='Number of Graph Transformer layers to stack. Set to >0 to include GT layers.')
+parser.add_argument('--transformer_out_dim', type=int, default=128,
+                    help='Output dimension for each transformer layer.')
+parser.add_argument('--transformer_num_heads', type=int, nargs='+', default=(8, 8),
+                    help='Number of attention heads for each Transformer layer.')
+parser.add_argument('--transformer_dropout_prob', type=float, default=0.0,
+                    help='Dropout probability for transformer layers.')
+parser.add_argument('--transformer_layer_norm', action='store_true',
+                    help='Apply layer normalization in transformer layers.')
+parser.add_argument('--transformer_batch_norm', action='store_true',
+                    help='Apply batch normalization in transformer layers.')
+parser.add_argument('--transformer_residual', action='store_true',
+                    help='Use residual connections in transformer layers.')
+parser.add_argument('--transformer_use_bias', action='store_true',
+                    help='Use bias terms in transformer layers.')
+
 # GNN specific params
 subparsers = parser.add_subparsers()
 # Best params for GAT:
@@ -64,7 +86,6 @@ gat_subparser.add_argument('--GNN-activation', type=str, choices=activations, de
 gat_subparser.add_argument('--skip-connections', type=str, default='linear', choices=('none', 'identity', 'linear'), help='type of skip connections. Identity: y = x + conv(x). Linear: y = lin(x) + conv(x)')
 gat_subparser.add_argument('--norm-act-drop-before-conv', action='store_true', help='Perform normalization, activation and dropout before graph convolution.')
 
-
 # Add GATv2 subparser
 gatv2_subparser = subparsers.add_parser('GATv2')
 gatv2_subparser.set_defaults(GNN_model='GATv2Conv')
@@ -74,12 +95,12 @@ gatv2_subparser.add_argument('--GNN-hidden-sizes', type=int, nargs='+', default=
                              help='Hidden layer sizes of the GNN model.')
 
 # Number of attention heads for each GATv2 layer
-gatv2_subparser.add_argument('--GATv2-heads', type=int, nargs='+', default=(8, 8),
+gatv2_subparser.add_argument('--GATv2-heads', type=int, nargs='+', default=(4, 4, 6),
                              help='Number of multi-head attentions in each layer of GATv2Conv. '
                                   'Provide as a list corresponding to each GNN layer.')
 
 # Dropout probability specific to GATv2Conv
-gatv2_subparser.add_argument('--GATv2-dropout', type=float, default=0.6,
+gatv2_subparser.add_argument('--GATv2-dropout', type=float, default=0.0,
                              help='Dropout probability for GATv2Conv layers.')
 
 # Activation function for GATv2Conv layers
