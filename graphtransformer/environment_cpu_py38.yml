@@ -1,0 +1,39 @@
+name: graph_transformer
+channels:
+  - pytorch
+  - dglteam
+  - conda-forge
+  - anaconda
+  - defaults
+dependencies:
+  - python=3.8
+  - pip
+  - pytorch=1.6.0
+  - torchvision=0.7.0
+  - dgl=0.5.2
+  - numpy=1.18
+  - matplotlib
+  - tensorboardx=1.8
+  - future=0.18.2
+  - absl-py
+  - networkx
+  - scikit-learn
+  - scipy
+  - notebook
+  - h5py
+  - mkl
+  - ipykernel
+  - ipython
+  - ipywidgets
+  - jupyter
+  - jupyter_client
+  - jupyter_console
+  - jupyter_core
+  - plotly
+  - scikit-image
+  - requests
+  - tqdm
+  - pip:
+      - tensorflow==2.4.1
+      - tensorflow-estimator==2.4.0
+      - tensorboard==2.4.1
