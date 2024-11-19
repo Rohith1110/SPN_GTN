@@ -45,12 +45,12 @@ python refine.py \
     --GNN-hidden-sizes 256 256 \
     --GATv2-heads 4 4 6 
 
-python solve_proxy.py --dataset ppi-1-100 --solve-proxy-epochs 50 --solve-proxy-eval-every 10 --use_gt_layer --num_transformer_layers 2 --transformer_out_dim 256 --transformer_num_heads 8 8 --joint-model GATv2 --GNN-hidden-sizes 256 256 --GATv2-heads 4 4 6
+python solve_proxy.py --dataset ppi-1-100 --solve-proxy-epochs 50 --solve-proxy-eval-every 10 --use_gt_layer --num_transformer_layers 1 --transformer_out_dim 256 --transformer_num_heads 4 --joint-model GATv2 --GNN-hidden-sizes 256 256 --GATv2-heads 4 4 6
 
-python solve_proxy.py --dataset pubmed --solve-proxy-epochs 50 --solve-proxy-eval-every 10 --use_gt_layer --num_transformer_layers 2 --transformer_out_dim 256 --transformer_num_heads 8 8 --joint-model GATv2 --GNN-hidden-sizes 256 256 --GATv2-heads 4 4 6
+python solve_proxy.py --dataset pubmed --solve-proxy-epochs 50 --solve-proxy-eval-every 10 --use_gt_layer --num_transformer_layers 1 --transformer_out_dim 256 --transformer_num_heads 4 --joint-model GATv2 --GNN-hidden-sizes 256 256 --GATv2-heads 4 4 6
 
-python solve_proxy.py --dataset cora --solve-proxy-epochs 50 --solve-proxy-eval-every 10 --use_gt_layer --num_transformer_layers 2 --transformer_out_dim 256 --transformer_num_heads 8 8 --joint-model GATv2 --GNN-hidden-sizes 256 256 --GATv2-heads 4 4 6
+python solve_proxy.py --dataset cora --solve-proxy-epochs 50 --solve-proxy-eval-every 10 --use_gt_layer --num_transformer_layers 1 --transformer_out_dim 256 --transformer_num_heads 4 --joint-model GATv2 --GNN-hidden-sizes 256 256 --GATv2-heads 4 4 6
 
-python solve_proxy.py --dataset citeseer --solve-proxy-epochs 50 --solve-proxy-eval-every 10 --use_gt_layer --num_transformer_layers 2 --transformer_out_dim 256 --transformer_num_heads 8 8 --joint-model GATv2 --GNN-hidden-sizes 256 256 --GATv2-heads 4 4 6
+python solve_proxy.py --dataset citeseer --solve-proxy-epochs 50 --solve-proxy-eval-every 10 --use_gt_layer --num_transformer_layers 1 --transformer_out_dim 256 --transformer_num_heads 4 --joint-model GATv2 --GNN-hidden-sizes 256 256 --GATv2-heads 4 4 6
 
-python solve_proxy.py --dataset dblp --solve-proxy-epochs 50 --solve-proxy-eval-every 10 --use_gt_layer --num_transformer_layers 2 --transformer_out_dim 256 --transformer_num_heads 8 8 --joint-model GATv2 --GNN-hidden-sizes 256 256 --GATv2-heads 4 4 6
+python solve_proxy.py --dataset dblp --solve-proxy-epochs 50 --solve-proxy-eval-every 10 --use_gt_layer --num_transformer_layers 1 --transformer_out_dim 256 --transformer_num_heads 4 --joint-model GATv2 --GNN-hidden-sizes 256 256 --GATv2-heads 4 4 6
