@@ -25,8 +25,10 @@ def belief_propagation(sum_product: bool, args: Namespace, pred_node: torch.Tens
     """
     n_nodes, n_edges = pred_node.size(0), pred_edge.size(0)
     pred_edge = pred_edge.view(-1, num_classes, num_classes)
-
-    msg = torch.ones(n_edges, num_classes).cuda() / num_classes
+    if device.type == 'cuda':
+        msg = torch.ones(n_edges, num_classes).cuda() / num_classes
+    else:
+        msg = torch.ones(n_edges, num_classes) / num_classes
     msg = msg.log()
 
     s, t = edge_index[0], edge_index[1]

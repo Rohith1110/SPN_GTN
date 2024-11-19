@@ -188,7 +188,6 @@ class MultiGNNLayers(torch.nn.Module):
 
     def forward(self, data):
         x, edge_index = data.x, data.edge_index
-        print(f"Initial x shape: {x.shape}")
         if self.pre_layer is not None:
             x = self.pre_layer(x)
         if self.norm_act_drop_before_conv:

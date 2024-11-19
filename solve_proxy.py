@@ -132,7 +132,8 @@ def solve_proxy(args: Namespace, model: Union[JointModel, SeparateModel]=None,
 
 
 if __name__ == "__main__":
-    torch.cuda.set_device(0)
+    # torch.cuda.set_device(0)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     args = parser.parse_args()
     print(args)
     if args.seed:
