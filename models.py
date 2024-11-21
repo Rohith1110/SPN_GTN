@@ -196,9 +196,10 @@ class MultiGNNLayers(torch.nn.Module):
                 else:
                     x = layer(x, edge_index)
             # Pass through Graph Transformer Layers if enabled
-            if self.transformer_layers:
-                for transformer_layer in self.transformer_layers:
-                    x = transformer_layer(x, edge_index)
+            if self.args.use_gt_layer:
+                if self.transformer_layers:
+                    for transformer_layer in self.transformer_layers:
+                        x = transformer_layer(x, edge_index)
 
         return x
 
