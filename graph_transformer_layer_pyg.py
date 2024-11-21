@@ -9,6 +9,7 @@ class MultiHeadAttentionLayer(nn.Module):
         self.out_dim_per_head = out_dim_per_head
         self.num_heads = num_heads
         self.use_bias = use_bias
+        self.in_dim = in_dim
 
         # Linear projections for query, key, and value
         self.Q = nn.Linear(in_dim, out_dim_per_head * num_heads, bias=use_bias)

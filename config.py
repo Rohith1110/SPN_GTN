@@ -57,11 +57,11 @@ parser.add_argument('--use_gt_layer', action='store_true',
                     help='Include the Graph Transformer (GT) layer in the model.')
 
 # Modify existing arguments if necessary to accommodate transformer parameters
-parser.add_argument('--num_transformer_layers', type=int, default=2,
+parser.add_argument('--num_transformer_layers', type=int, default=1,
                     help='Number of Graph Transformer layers to stack. Set to >0 to include GT layers.')
 parser.add_argument('--transformer_out_dim', type=int, default=128,
                     help='Output dimension for each transformer layer.')
-parser.add_argument('--transformer_num_heads', type=int, nargs='+', default=(8, 8),
+parser.add_argument('--transformer_num_heads', type=int, nargs='+', default=8,
                     help='Number of attention heads for each Transformer layer.')
 parser.add_argument('--transformer_dropout_prob', type=float, default=0.0,
                     help='Dropout probability for transformer layers.')
@@ -73,6 +73,8 @@ parser.add_argument('--transformer_residual', action='store_true',
                     help='Use residual connections in transformer layers.')
 parser.add_argument('--transformer_use_bias', action='store_true',
                     help='Use bias terms in transformer layers.')
+parser.add_argument('--use-laplacian-pe', action='store_true', help='Enable Laplacian Positional Encoding')
+parser.add_argument('--pe-dim', type=int, default=64, help='Dimension of the positional encoding')
 
 # GNN specific params
 subparsers = parser.add_subparsers()

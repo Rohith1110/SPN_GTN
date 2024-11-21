@@ -7,6 +7,11 @@ from torch_geometric.datasets import PPI
 from torch_geometric.data import (InMemoryDataset, Data, DataLoader)
 import torch_geometric.transforms as T
 
+import torch.nn.functional as F
+from torch_geometric.utils import get_laplacian, to_scipy_sparse_matrix
+import scipy.sparse as sp
+import numpy as np
+from scipy.sparse.linalg import eigsh  # For sparse matrices
 
 class ProcessedDataset(InMemoryDataset):
     pass
@@ -24,6 +29,71 @@ def precompute_edge_label_and_reverse(dataset: InMemoryDataset):
 
         data_list.append(data)
 
+    new_data, new_slices = InMemoryDataset.collate(data_list)
+    new_dataset = ProcessedDataset('.')
+    new_dataset.data = new_data
+    new_dataset.slices = new_slices
+    return new_dataset
+
+def compute_laplacian_positional_encoding(data, pe_dim):
+    """
+    Computes the Laplacian positional encoding for a given graph.
+
+    Args:
+        data (Data): The data object containing the graph.
+        pe_dim (int): The number of Laplacian eigenvectors to use.
+
+    Returns:
+        data (Data): The data object with the positional encodings added.
+    """
+    num_nodes = data.num_nodes
+    edge_index = data.edge_index
+    edge_weight = data.edge_attr
+
+    if edge_weight is None:
+        print("No edge weights provided, using uniform weights.")
+        edge_weight = torch.ones(edge_index.size(1), dtype=torch.float32)
+
+    # Create the adjacency matrix in scipy sparse format
+    adj = to_scipy_sparse_matrix(edge_index, edge_attr=edge_weight, num_nodes=num_nodes)
+
+    # Compute the normalized Laplacian
+    deg = np.array(adj.sum(axis=1)).flatten()
+    deg_inv_sqrt = np.power(deg, -0.5)
+    deg_inv_sqrt[np.isinf(deg_inv_sqrt)] = 0.0
+    deg_inv_sqrt_mat = sp.diags(deg_inv_sqrt)
+    normalized_adj = deg_inv_sqrt_mat @ adj @ deg_inv_sqrt_mat
+
+    laplacian = sp.eye(num_nodes) - normalized_adj
+
+    # Compute the smallest non-trivial eigenvectors
+    try:
+        # Use eigsh for sparse symmetric matrices
+        eigenvalues, eigenvectors = eigsh(laplacian, k=pe_dim+1, which='SM', tol=1e-2)
+        # Exclude the first trivial eigenvector
+        positional_encoding = torch.from_numpy(eigenvectors[:, 1:pe_dim+1]).float()
+    except Exception as e:
+        print(f"Error computing Laplacian PE: {e}")
+        # Fall back to random positional encodings
+        positional_encoding = torch.randn(num_nodes, pe_dim)
+
+    # Normalize positional encodings
+    positional_encoding = F.normalize(positional_encoding, p=2, dim=1)
+
+    # Store the positional encodings in the data object
+    data.pos_enc = positional_encoding
+
+    # Concatenate positional encodings with node features
+    data.x = torch.cat([data.x, data.pos_enc], dim=1)
+    # data.num_features = data.x.size(1) 
+
+    return data
+
+def compute_laplacian_pe_dataset(dataset: InMemoryDataset, pe_dim: int):
+    data_list = []
+    for data in dataset:
+        data = compute_laplacian_positional_encoding(data, pe_dim)
+        data_list.append(data)
     new_data, new_slices = InMemoryDataset.collate(data_list)
     new_dataset = ProcessedDataset('.')
     new_dataset.data = new_data
@@ -124,6 +194,13 @@ def prepare_dataloaders(args: Namespace):
         val_loader = BatchedCitationDataset(root=root / f'{args.dataset}_val.pt')
         test_loader = BatchedCitationDataset(root=root / f'{args.dataset}_test.pt')
         train_loader, val_loader, test_loader = map(precompute_edge_label_and_reverse, (train_loader, val_loader, test_loader))
+        
+        # Compute and add Laplacian PE if enabled
+        if args.use_laplacian_pe:
+            train_loader = compute_laplacian_pe_dataset(train_loader, args.pe_dim)
+            val_loader = compute_laplacian_pe_dataset(val_loader, args.pe_dim)
+            test_loader = compute_laplacian_pe_dataset(test_loader, args.pe_dim)
+
         def _set_dataset_attr(loader):
             loader.dataset = loader
             return loader

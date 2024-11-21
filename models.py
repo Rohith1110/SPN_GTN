@@ -9,6 +9,8 @@ from torch_geometric.nn import GATConv, GCNConv, SAGEConv, GCN2Conv, GINConv, GE
 # from graphtransformer.layers.graph_transformer_layer import GraphTransformerLayer
 # from graphtransformer.layers.graph_transformer_edge_layer import GraphTransformerLayer as GraphTransformerEdgeLayer
 from graph_transformer_layer_pyg import GraphTransformerLayer
+from graph_transformer_edge_layer_pyg import GraphTransformerEdgeLayer
+from dataset import compute_laplacian_positional_encoding
 from argparse import Namespace
 
 
@@ -74,17 +76,6 @@ class GNNLayer(torch.nn.Module):
 
         self.norm_act_drop_before_conv = hasattr(args, 'norm_act_drop_before_conv') and args.norm_act_drop_before_conv
         self.norm_act_drop = norm_act_drop(out_channels, norm_module=args.GNN_norm_module, activation=args.GNN_activation, dropout_prob=args.dropout_prob, final_layer=final_layer)
-        # Initialize Transformer Layer
-        # self.transformer = GraphTransformerLayer(
-        #     in_dim=out_channels,
-        #     out_dim=args.transformer_out_dim,
-        #     num_heads=args.transformer_num_heads,
-        #     dropout=args.transformer_dropout_prob,
-        #     layer_norm=args.transformer_layer_norm,
-        #     batch_norm=args.transformer_batch_norm,
-        #     residual=args.transformer_residual,
-        #     use_bias=args.transformer_use_bias
-        # )
 
     def get_conv(self, in_channels: int, out_channels: int, heads: int, args: Namespace, final_layer: bool, layer: int):
         if args.GNN_model == 'GATConv':
@@ -131,8 +122,6 @@ class GNNLayer(torch.nn.Module):
 
         if self.norm_act_drop is not None and not self.norm_act_drop_before_conv:
             x = self.norm_act_drop(x)
-        # Pass through Transformer Layer
-        # x = self.transformer(x)
         return x
 
 
@@ -147,7 +136,9 @@ class MultiGNNLayers(torch.nn.Module):
             assert len(args.GNN_hidden_sizes) == len(args.GATv2_heads) - (0 if args.skip_connections == 'identity' else 1)
         self.pre_layer = None
         self.layers = torch.nn.ModuleList()
-
+        # if args.use_laplacian_pe:
+        #     in_channels = num_features + args.pe_dim
+        # else:
         in_channels = num_features
         if args.skip_connections == 'identity' or args.GNN_model == 'GCN2Conv':
             hidden_size = args.GNN_hidden_sizes[0]
@@ -172,9 +163,10 @@ class MultiGNNLayers(torch.nn.Module):
             assert len(args.transformer_num_heads) == args.num_transformer_layers, \
                 "Length of transformer_num_heads must match num_transformer_layers."
             self.transformer_layers = torch.nn.ModuleList()
+            in_dim = args.GNN_hidden_sizes[-1] if args.use_laplacian_pe else in_channels
             for i in range(args.num_transformer_layers):
                 transformer_layer = GraphTransformerLayer(
-                in_dim=in_channels,
+                in_dim=in_dim,
                 out_dim=args.transformer_out_dim,
                 num_heads=args.transformer_num_heads[i],
                 dropout=args.transformer_dropout_prob,
