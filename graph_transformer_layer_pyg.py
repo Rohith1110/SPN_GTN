@@ -56,7 +56,7 @@ class MultiHeadAttentionLayer(nn.Module):
         return out  # [num_nodes, num_heads * out_dim_per_head]
 
 class GraphTransformerLayer(nn.Module):
-    def __init__(self, in_dim, out_dim, num_heads, dropout=0.0, layer_norm=False, batch_norm=True, residual=True, use_bias=False):
+    def __init__(self, in_dim, out_dim, num_heads, dropout=0.0, layer_norm=False, batch_norm=False, residual=False, use_bias=False):
         super().__init__()
 
         self.in_dim = in_dim
