@@ -77,6 +77,8 @@ if __name__ == '__main__':
     p.add_argument('--log-str', type=str, default='')
     p.add_argument('--load-ckpt', type=str, default=os.path.join('.', 'results'))
     p.add_argument('--model-names', type=str, nargs='+', choices=('jointGAT', 'jointGAT2', 'jointGCN', 'jointGCN2', 'jointSAGE', 'GAT', 'GAT2', 'GCN', 'GCN2', 'SAGE', 'GraphUNet', 'CRF'), default=['GAT'])
+    p.add_argument('--use-gt-layer', action='store_true', help='Include the Graph Transformer (GT) layer in the model.')
+    p.add_argument('--use-laplacian-pe', action='store_true', help='Include the Laplacian Positional Encoding in the model.')
     p.add_argument('--sources', type=str, nargs='+', default=('pm', 'pp', 'crf', 'rm'))
     p.add_argument('--pivot-save-to', type=str, default='pivot_ppi_result.csv')
     p.add_argument('--save-to', type=str, default='ppi_result.csv')

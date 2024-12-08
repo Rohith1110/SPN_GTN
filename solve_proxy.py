@@ -36,6 +36,9 @@ def solve_proxy(args: Namespace, model: Union[JointModel, SeparateModel]=None,
     if model_name is None:
         model_name = 'joint' if args.joint_model else 'separated'
         model_name = f'{model_name}_{args.GNN_model}{args.log_str}'
+        if args.use_gt_layer:
+            model_name += '_GT'
+        model_name += f"{args.log_str}"
     os.makedirs(os.path.join(args.ckpt_dir, model_name), exist_ok=True)
 
     # Get dataloaders

@@ -66,6 +66,8 @@ def refine(args: Namespace, model_name: Union[None, str]=None, device = torch.de
             model_name = 'CRF'
         else:
             model_name = f"{'joint' if args.joint_model else 'separated'}_{args.GNN_model}{'' if args.no_proxy else '_refined'}{'' if not args.no_log_softmax else '_noLogSoftmax'}"
+        if args.use_gt_layer:
+            model_name += '_GT'
         model_name = f'{model_name}{args.log_str}'
     os.makedirs(os.path.join(args.ckpt_dir, model_name), exist_ok=True)
 
