@@ -95,11 +95,25 @@ if __name__ == '__main__':
                 valid_lids = defaultdict(list)
                 for lid in range(121):
                     model_name_in_path = model_name_dict[model_name]
-                    pm_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}{args.log_str}/gnn_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
-                    pp_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}{args.log_str}/pp_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
-                    rm_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}_refined*{args.log_str}/rm_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
-                    crf_gnn_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}_noLogSoftmax*{args.log_str}/rm_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
-                    crf_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}{args.log_str}/rm_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
+                    if args.use_gt_layer:
+                        if args.use_laplacian_pe:
+                            pm_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}_GT_LapPE{args.log_str}/gnn_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
+                            pp_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}_GT_LapPE{args.log_str}/pp_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
+                            rm_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}_refined*_GT_LapPE{args.log_str}/rm_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
+                            crf_gnn_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}_noLogSoftmax*_GT_LapPE{args.log_str}/rm_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
+                            crf_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}_GT_LapPE{args.log_str}/rm_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
+                        else:
+                            pm_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}_GT{args.log_str}/gnn_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
+                            pp_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}_GT{args.log_str}/pp_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
+                            rm_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}_refined*_GT{args.log_str}/rm_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
+                            crf_gnn_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}_noLogSoftmax*_GT{args.log_str}/rm_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
+                            crf_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}_GT{args.log_str}/rm_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
+                    else:
+                        pm_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}{args.log_str}/gnn_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
+                        pp_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}{args.log_str}/pp_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]     
+                        rm_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}_refined*{args.log_str}/rm_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
+                        crf_gnn_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}_noLogSoftmax*{args.log_str}/rm_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
+                        crf_ls = [get_latest_pt_file(list(root.glob(f'{model_name_in_path}{args.log_str}/rm_ppi-{ngraphs}-{lid}_seed{seed}_*.pt')))]
                     if model_name == 'CRF':
                         pred_dict = {'crf': crf_ls}
                     else:
