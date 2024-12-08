@@ -2,7 +2,7 @@
 
 # Define parameters
 SOLVE_PROXY_EPOCHS=1000
-REFINE_EPOCHS=1000
+REFINE_EPOCHS=500
 MODEL_TYPE="GCN2"
 GNN_HIDDEN_SIZES=(256 256)
 GATV2_HEADS=(4 4 6)
@@ -13,7 +13,7 @@ TIMESTAMP=$(date +"%m-%d_%H-%M-%S")
 
 
 # Loop through different PPI datasets
-for PPI_SIZE in 1 2 10
+for PPI_SIZE in 1 2
 do
     # Loop through label IDs from 0 to 120
     for LABEL_ID in {0..120}
@@ -36,8 +36,10 @@ do
             --use_gt_layer \
             --num_transformer_layers 1 \
             --transformer_out_dim 256 \
-            --transformer_num_heads 2 \
-            --transformer_dropout_prob 0.1 \
+            --transformer_num_heads 64 \
+            --transformer_dropout_prob 0.05 \
+            --transformer_batch_norm \
+            --transformer_residual \
             --joint-model \
             ${MODEL_TYPE} \
         
@@ -52,8 +54,10 @@ do
             --use_gt_layer \
             --num_transformer_layers 1 \
             --transformer_out_dim 256 \
-            --transformer_num_heads 2 \
-            --transformer_dropout_prob 0.1 \
+            --transformer_num_heads 64 \
+            --transformer_dropout_prob 0.05 \
+            --transformer_batch_norm \
+            --transformer_residual \
             --joint-model \
             --no-log-softmax ${MODEL_TYPE}
         
