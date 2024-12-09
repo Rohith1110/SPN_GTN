@@ -33,13 +33,6 @@ do
             --solve-proxy-eval-every 100 \
             --refine-epochs ${REFINE_EPOCHS} \
             --refine-eval-every 100 \
-            --use_gt_layer \
-            --num_transformer_layers 1 \
-            --transformer_out_dim 256 \
-            --transformer_num_heads 64 \
-            --transformer_dropout_prob 0.05 \
-            --transformer_batch_norm \
-            --transformer_residual \
             --joint-model \
             ${MODEL_TYPE} \
         
@@ -51,13 +44,6 @@ do
             --no-proxy \
             --refine-epochs ${REFINE_EPOCHS} \
             --refine-eval-every 100 \
-            --use_gt_layer \
-            --num_transformer_layers 1 \
-            --transformer_out_dim 256 \
-            --transformer_num_heads 64 \
-            --transformer_dropout_prob 0.05 \
-            --transformer_batch_norm \
-            --transformer_residual \
             --joint-model \
             --no-log-softmax ${MODEL_TYPE}
         
