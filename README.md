@@ -1,5 +1,5 @@
 # Structured Proxy Network (SPN)
-This is the official implementation of the ICLR 2022 paper [Neural Structured Prediction for Inductive Node Classification](https://openreview.net/forum?id=YWNAX0caEjI).
+[Neural Structured Prediction for Inductive Node Classification](https://openreview.net/forum?id=YWNAX0caEjI).
 
 ## Introduction
 SPN focuses on inductive node classification, which is a fundamental problem in graph machine learning and structured prediction. The idea of SPN is to combine **Graph Neural Networks (GNNs)** and **Conditional Random Fields (CRFs)** by parameterizing the potential functions of CRFs with GNNs.
@@ -85,7 +85,54 @@ python solve_proxy.py --dataset ppi-10-0 \
     --GAT-heads 4 4 6
 ```
 
-**5. Train a CRF**
+**5. Train a GATv2 model**
+```bash
+python solve_proxy.py --dataset ppi-10-0 \
+    --solve-proxy-epochs 400 \
+    --dropout-prob 0.5 \
+    GATv2 \
+    --GNN-hidden-sizes 64 64 \
+    --GAT-heads 4 4 6
+```
+
+**6. Train a SPN-GT joint model**
+```bash
+    python refine.py \
+        --dataset ppi-10-0 \
+        --solve-proxy-epochs 1000 \
+        --solve-proxy-eval-every 100 \
+        --refine-epochs 1000 \
+        --refine-eval-every 100 \
+        --use_gt_layer \
+        --num_transformer_layers 1 \
+        --transformer_out_dim 256 \
+        --transformer_num_heads 64 \
+        --transformer_dropout_prob 0.05 \
+        --transformer_batch_norm \
+        --transformer_residual \
+        --joint-model \
+        GCN2
+```
+
+**7. Refine a SPN-GT joint model**
+```bash
+    python refine.py \
+        --dataset ppi-10-0 \
+        --no-proxy \
+        --refine-epochs 1000 \
+        --refine-eval-every 100 \
+        --use_gt_layer \
+        --num_transformer_layers 1 \
+        --transformer_out_dim 256 \
+        --transformer_num_heads 64 \
+        --transformer_dropout_prob 0.05 \
+        --transformer_batch_norm \
+        --transformer_residual \
+        --joint-model \
+        --no-log-softmax GCN2
+```
+
+**8. Train a CRF**
 
 Specifying CRF as the model will automatically set the `--no-proxy` argument, so no need to specify that. In this case, we also only perform refinement, so training-related arguments should be `--refine-[xx]`.
 ```bash
@@ -99,14 +146,3 @@ python refine.py --dataset pubmed \
 
 We provide the processed Citation datasets (Cora\*, CiteSeer\*, Pubmed\*) in the file `Citation.7z`. The dataset consists of ego-graphs extracted from the citation networks. Decompress it in the directory `./data` before running.
 
-## Citation
-
-Please consider citing the following paper if you find our codes helpful. Thank you!
-```
-@inproceedings{qu2021neural,
-  title={Neural Structured Prediction for Inductive Node Classification},
-  author={Qu, Meng and Cai, Huiyu and Tang, Jian},
-  booktitle={International Conference on Learning Representations},
-  year={2021}
-}
-```
