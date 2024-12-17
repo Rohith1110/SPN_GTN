@@ -142,6 +142,8 @@ python refine.py --dataset pubmed \
     CRF
 ```
 
+
+This entire implementation is for SPN. We have created multiple branches with new features for SPN.
 ## Datasets
 
 We provide the processed Citation datasets (Cora\*, CiteSeer\*, Pubmed\*) in the file `Citation.7z`. The dataset consists of ego-graphs extracted from the citation networks. Decompress it in the directory `./data` before running.
